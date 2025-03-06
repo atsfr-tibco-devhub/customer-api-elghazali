@@ -28,7 +28,7 @@
       "description": "testKO",
       "flowInputs": {
         "pathParams": {
-          "id": 2
+          "id": 5
         }
       }
     }
@@ -36,7 +36,7 @@
   "type": "flogo:unittest",
   "model": "1.1.1",
   "app": {
-    "name": "customer-api",
+    "name": "customer-api-elghazali",
     "version": "1.0.0"
   }
 }

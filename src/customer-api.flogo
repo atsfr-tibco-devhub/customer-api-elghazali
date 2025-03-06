@@ -1,7 +1,14 @@
 {
   "imports": [
     "github.com/project-flogo/flow",
-    "github.com/project-flogo/contrib/activity/noop"
+    "github.com/project-flogo/contrib/activity/noop",
+    "github.com/tibco/flogo-general/src/app/General/activity/log",
+    "github.com/tibco/flogo-general/src/app/General/activity/rest",
+    "github.com/tibco/flogo-general/src/app/General/activity/mapper",
+    "github.com/project-flogo/contrib/activity/actreturn",
+    "rest_1 github.com/tibco/flogo-general/src/app/General/trigger/rest",
+    "github.com/project-flogo/contrib/function/coerce",
+    "github.com/project-flogo/contrib/function/string"
   ],
   "name": "customer-api-elghazali",
   "description": "A service that calls a backend customer service using Flogo - developped by Hicham",
@@ -9,14 +16,125 @@
   "type": "flogo:app",
   "appModel": "1.1.1",
   "tags": [],
-  "triggers": [],
+  "triggers": [
+    {
+      "ref": "#rest_1",
+      "name": "tibco-wi-rest",
+      "description": "Simple REST Trigger",
+      "settings": {
+        "port": 10000,
+        "APISpecUpdate": true,
+        "swagger": "spec://d1177d5c",
+        "swaggerVersion": "v3",
+        "apiVersion": "1.0.0",
+        "secureConnection": false,
+        "serverKey": "",
+        "caCertificate": ""
+      },
+      "id": "ReceiveHTTPMessage",
+      "handlers": [
+        {
+          "description": "Returns a customer object by Id",
+          "settings": {
+            "APISpecPath": "/customer/{id}",
+            "Method": "GET",
+            "reqType": "application/json",
+            "Path": "/customer/{id}",
+            "OutputValidation": false
+          },
+          "action": {
+            "ref": "github.com/project-flogo/flow",
+            "settings": {
+              "flowURI": "res://flow:getCustomerById"
+            },
+            "input": {
+              "pathParams": "=$.pathParams"
+            },
+            "output": {
+              "code": "=$.code",
+              "responseBody": "=$.responseBody"
+            }
+          },
+          "reply": {
+            "code": 200,
+            "configureResponseCodes": true,
+            "message": ""
+          },
+          "schemas": {
+            "reply": {
+              "responseBody": {
+                "type": "json",
+                "value": "{\"type\":\"object\",\"properties\":{\"body\":{\"type\":\"any\"},\"headers\":{\"type\":\"object\"}}}",
+                "fe_metadata": "{\"type\":\"object\",\"properties\":{\"body\":{\"type\":\"any\"},\"headers\":{\"type\":\"object\"}}}"
+              },
+              "responseCodesSchema": {
+                "type": "json",
+                "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"code\":{\"type\":\"number\"},\"responseType\":{\"type\":\"string\"},\"responseSchema\":{\"type\":\"string\"}},\"required\":[\"code\",\"responseType\"]}}",
+                "fe_metadata": "[{\"code\":200,\"responseType\":\"object\",\"responseSchema\":\"{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"id\\\":{\\\"type\\\":\\\"integer\\\",\\\"description\\\":\\\"identifier\\\",\\\"example\\\":1},\\\"name\\\":{\\\"type\\\":\\\"string\\\",\\\"description\\\":\\\"name\\\",\\\"example\\\":\\\"John Doe\\\"},\\\"email\\\":{\\\"type\\\":\\\"string\\\",\\\"description\\\":\\\"email\\\",\\\"example\\\":\\\"john.doe@example.com\\\"},\\\"age\\\":{\\\"type\\\":\\\"integer\\\",\\\"description\\\":\\\"age\\\",\\\"example\\\":30},\\\"city\\\":{\\\"type\\\":\\\"string\\\",\\\"description\\\":\\\"city\\\",\\\"example\\\":\\\"New York\\\"}}}\"},{\"code\":400,\"responseType\":\"string\"}]"
+              }
+            },
+            "output": {
+              "pathParams": {
+                "type": "json",
+                "value": "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"number\"}},\"required\":[\"id\"]}",
+                "fe_metadata": "[{\"parameterName\":\"id\",\"type\":\"number\",\"required\":true}]"
+              },
+              "headers": {
+                "type": "json",
+                "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+              }
+            }
+          },
+          "name": "getCustomerById"
+        }
+      ]
+    }
+  ],
   "resources": [
     {
       "id": "flow:getCustomerById",
       "data": {
         "name": "getCustomerById",
         "description": "Returns a customer object by Id",
-        "links": [],
+        "links": [
+          {
+            "id": 1,
+            "from": "StartActivity",
+            "to": "LogMessage",
+            "type": "label",
+            "label": "StartActivity to LogMessage"
+          },
+          {
+            "id": 2,
+            "from": "LogMessage",
+            "to": "CallBackendService",
+            "type": "label",
+            "label": "LogMessage to InvokeRESTService"
+          },
+          {
+            "id": 3,
+            "from": "CallBackendService",
+            "to": "MapperCustomer",
+            "type": "expression",
+            "label": "CallBackendService to Mapper",
+            "value": "$activity[CallBackendService].statusCode==200"
+          },
+          {
+            "id": 4,
+            "from": "MapperCustomer",
+            "to": "Return",
+            "type": "label",
+            "label": "Mapper to Return"
+          },
+          {
+            "id": 5,
+            "from": "CallBackendService",
+            "to": "Return400",
+            "type": "exprOtherwise",
+            "label": "CallBackendService to Return1"
+          }
+        ],
         "tasks": [
           {
             "id": "StartActivity",
@@ -25,9 +143,175 @@
             "activity": {
               "ref": "#noop"
             }
+          },
+          {
+            "id": "LogMessage",
+            "name": "LogMessage",
+            "description": "Simple Log Message Activity",
+            "activity": {
+              "ref": "#log",
+              "input": {
+                "Log Level": "INFO",
+                "flowInfo": false,
+                "message": "=string.concat(\"Retrieving customer object for id: \",coerce.toString($flow.pathParams.id))",
+                "logLevel": ""
+              }
+            }
+          },
+          {
+            "id": "CallBackendService",
+            "name": "CallBackendService",
+            "description": "Simple REST Activity",
+            "settings": {
+              "retryOnError": {
+                "count": 0,
+                "interval": 0
+              }
+            },
+            "activity": {
+              "ref": "#rest",
+              "input": {
+                "enableASR": false,
+                "swagger": {
+                  "filename": "customer-backend.json",
+                  "content": "data:application/json;base64,ewogICJvcGVuYXBpIjogIjMuMC4zIiwKICAiaW5mbyI6IHsKICAgICJ0aXRsZSI6ICJTd2FnZ2VyIEN1c3RvbWVyIEJhY2tlbmQtIE9wZW5BUEkgMy4wIiwKICAgICJkZXNjcmlwdGlvbiI6ICJUaGlzIGlzIGEgQ3VzdG9tZXIgQVBJIGJhc2VkIG9uIHRoZSBPcGVuQVBJIDMuMCBzcGVjaWZpY2F0aW9uLiAgIiwKICAgICJsaWNlbnNlIjogewogICAgICAibmFtZSI6ICJBcGFjaGUgMi4wIiwKICAgICAgInVybCI6ICJodHRwOi8vd3d3LmFwYWNoZS5vcmcvbGljZW5zZXMvTElDRU5TRS0yLjAuaHRtbCIKICAgIH0sCiAgICAidmVyc2lvbiI6ICIxLjAuMCIKICB9LAogICJleHRlcm5hbERvY3MiOiB7CiAgICAiZGVzY3JpcHRpb24iOiAiRmluZCBvdXQgbW9yZSBhYm91dCBTd2FnZ2VyIiwKICAgICJ1cmwiOiAiaHR0cDovL3N3YWdnZXIuaW8iCiAgfSwKICAic2VydmVycyI6IFsKICAgIHsKICAgICAgInVybCI6ICJodHRwczovL2Zsb2dvLmRwMS5hdHNmci1lbWVhLmF6dXJlLmRhdGFwbGFuZXMucHJvL3RpYmNvL2FwcHMvY3VzdG9tZXItYmFja2VuZCIKICAgIH0KICBdLAogICJ0YWdzIjogWwogICAgewogICAgICAibmFtZSI6ICJjdXN0b21lciIsCiAgICAgICJkZXNjcmlwdGlvbiI6ICJPcGVyYXRpb25zIGFib3V0IGN1c3RvbWVyIgogICAgfQogIF0sCiAgInBhdGhzIjogewogICAgIi9jdXN0b21lci1iYWNrZW5kL3tjdXN0b21lcklkfSI6IHsKICAgICAgImdldCI6IHsKICAgICAgICAidGFncyI6IFsKICAgICAgICAgICJjdXN0b21lciIKICAgICAgICBdLAogICAgICAgICJzdW1tYXJ5IjogIkZpbmQgY3VzdG9tZXIgYnkgSUQiLAogICAgICAgICJkZXNjcmlwdGlvbiI6ICJSZXR1cm5zIGEgc2luZ2xlIGN1c3RvbWVyIiwKICAgICAgICAib3BlcmF0aW9uSWQiOiAiZ2V0Q3VzdG9tZXJCeUlkIiwKICAgICAgICAicGFyYW1ldGVycyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgIm5hbWUiOiAiY3VzdG9tZXJJZCIsCiAgICAgICAgICAgICJpbiI6ICJwYXRoIiwKICAgICAgICAgICAgImRlc2NyaXB0aW9uIjogIklEIG9mIGN1c3RvbWVyIHRvIHJldHVybiIsCiAgICAgICAgICAgICJyZXF1aXJlZCI6IHRydWUsCiAgICAgICAgICAgICJzY2hlbWEiOiB7CiAgICAgICAgICAgICAgInR5cGUiOiAiaW50ZWdlciIsCiAgICAgICAgICAgICAgImZvcm1hdCI6ICJpbnQ2NCIKICAgICAgICAgICAgfQogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgInJlc3BvbnNlcyI6IHsKICAgICAgICAgICIyMDAiOiB7CiAgICAgICAgICAgICJkZXNjcmlwdGlvbiI6ICJzdWNjZXNzZnVsIG9wZXJhdGlvbiIsCiAgICAgICAgICAgICJjb250ZW50IjogewogICAgICAgICAgICAgICJhcHBsaWNhdGlvbi9qc29uIjogewogICAgICAgICAgICAgICAgInNjaGVtYSI6IHsKICAgICAgICAgICAgICAgICAgIiRyZWYiOiAiIy9jb21wb25lbnRzL3NjaGVtYXMvY3VzdG9tZXItYmFja2VuZCIKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICB9LAogICAgICAgICAgICAgICJhcHBsaWNhdGlvbi94bWwiOiB7CiAgICAgICAgICAgICAgICAic2NoZW1hIjogewogICAgICAgICAgICAgICAgICAiJHJlZiI6ICIjL2NvbXBvbmVudHMvc2NoZW1hcy9jdXN0b21lci1iYWNrZW5kIgogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQogICAgICAgICAgfSwKICAgICAgICAgICI0MDAiOiB7CiAgICAgICAgICAgICJkZXNjcmlwdGlvbiI6ICJJbnZhbGlkIElEIHN1cHBsaWVkIgogICAgICAgICAgfSwKICAgICAgICAgICI0MDQiOiB7CiAgICAgICAgICAgICJkZXNjcmlwdGlvbiI6ICJDdXN0b21lciBub3QgZm91bmQiCiAgICAgICAgICB9CiAgICAgICAgfQogICAgICB9CiAgICB9CiAgfSwKICAiY29tcG9uZW50cyI6IHsKICAgICJzY2hlbWFzIjogewogICAgICAKICAgICAgImN1c3RvbWVyLWJhY2tlbmQiOiB7CiAgICAgICAgInR5cGUiOiAib2JqZWN0IiwKICAgICAgICAicHJvcGVydGllcyI6IHsKICAgICAgICAgICJpZCI6IHsKICAgICAgICAgICAgInR5cGUiOiAiaW50ZWdlciIsCiAgICAgICAgICAgICJmb3JtYXQiOiAiaW50NjQiLAogICAgICAgICAgICAiZXhhbXBsZSI6IDEwMDAwMAogICAgICAgICAgfSwKICAgICAgICAgICJuYW1lIjogewogICAgICAgICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAgICAgICAiZXhhbXBsZSI6ICJmZWhndXkiCiAgICAgICAgICB9LAogICAgICAgICAgImVtYWlsIjogewogICAgICAgICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAgICAgICAiZXhhbXBsZSI6ICJmZWhndXlAbWFpbC5jb20iCiAgICAgICAgICB9LAogICAgICAgICAgImFnZSI6IHsKICAgICAgICAgICAgInR5cGUiOiAiaW50ZWdlciIsCiAgICAgICAgICAgICJmb3JtYXQiOiAiaW50NjQiLAogICAgICAgICAgICAiZXhhbXBsZSI6IDMyCiAgICAgICAgICB9LAogICAgICAgICAgImNpdHkiOiB7CiAgICAgICAgICAgICJ0eXBlIjogInN0cmluZyIsCiAgICAgICAgICAgICJleGFtcGxlIjogIlBhcmlzIgogICAgICAgICAgfQogICAgICAgIH0sCiAgICAgICAgInhtbCI6IHsKICAgICAgICAgICJuYW1lIjogImN1c3RvbWVyIgogICAgICAgIH0KICAgICAgfQogICAgfQogIH0KfQ=="
+                },
+                "authorization": false,
+                "authorizationConn": "",
+                "serviceName": "",
+                "resourcePath": "/customer-backend/{customerId}",
+                "Method": "GET",
+                "Uri": "https://flogo.dp1.atsfr-emea.azure.dataplanes.pro/tibco/apps/customer-backend",
+                "requestType": "application/json",
+                "Use certificate for verification": false,
+                "mutualAuth": false,
+                "Client Certificate": "",
+                "Client Key": "",
+                "Server Certificate": "",
+                "disableKeepAlives": false,
+                "Timeout": 0,
+                "proxy": "",
+                "host": "",
+                "pathParams": {
+                  "mapping": {
+                    "customerId": "=$flow.pathParams.id"
+                  }
+                }
+              },
+              "output": {
+                "configureResponseCodes": true,
+                "responseType": "application/json",
+                "responseOutput": "JSON Object"
+              },
+              "schemas": {
+                "input": {
+                  "serviceMetadata": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"openapi\":{\"type\":\"string\"},\"info\":{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"license\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"url\":{\"type\":\"string\"}}},\"version\":{\"type\":\"string\"}}},\"externalDocs\":{\"type\":\"object\",\"properties\":{\"description\":{\"type\":\"string\"},\"url\":{\"type\":\"string\"}}},\"servers\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"url\":{\"type\":\"string\"}}}},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"}}}},\"paths\":{\"type\":\"object\",\"properties\":{\"/customer-backend/{customerId}\":{\"type\":\"object\",\"properties\":{\"get\":{\"type\":\"object\",\"properties\":{\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"summary\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"operationId\":{\"type\":\"string\"},\"parameters\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"in\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"required\":{\"type\":\"boolean\"},\"schema\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"format\":{\"type\":\"string\"}}}}}},\"responses\":{\"type\":\"object\",\"properties\":{\"200\":{\"type\":\"object\",\"properties\":{\"description\":{\"type\":\"string\"},\"content\":{\"type\":\"object\",\"properties\":{\"application/json\":{\"type\":\"object\",\"properties\":{\"schema\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"properties\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"format\":{\"type\":\"string\"},\"example\":{\"type\":\"number\"}}},\"name\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"example\":{\"type\":\"string\"}}},\"email\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"example\":{\"type\":\"string\"}}},\"age\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"format\":{\"type\":\"string\"},\"example\":{\"type\":\"number\"}}},\"city\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"example\":{\"type\":\"string\"}}}}},\"xml\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"}}}}}}},\"application/xml\":{\"type\":\"object\",\"properties\":{\"schema\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"properties\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"format\":{\"type\":\"string\"},\"example\":{\"type\":\"number\"}}},\"name\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"example\":{\"type\":\"string\"}}},\"email\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"example\":{\"type\":\"string\"}}},\"age\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"format\":{\"type\":\"string\"},\"example\":{\"type\":\"number\"}}},\"city\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"example\":{\"type\":\"string\"}}}}},\"xml\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"}}}}}}}}}}},\"400\":{\"type\":\"object\",\"properties\":{\"description\":{\"type\":\"string\"}}},\"404\":{\"type\":\"object\",\"properties\":{\"description\":{\"type\":\"string\"}}}}}}}}}}},\"components\":{\"type\":\"object\",\"properties\":{\"schemas\":{\"type\":\"object\",\"properties\":{\"customer-backend\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"properties\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"format\":{\"type\":\"string\"},\"example\":{\"type\":\"number\"}}},\"name\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"example\":{\"type\":\"string\"}}},\"email\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"example\":{\"type\":\"string\"}}},\"age\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"format\":{\"type\":\"string\"},\"example\":{\"type\":\"number\"}}},\"city\":{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\"},\"example\":{\"type\":\"string\"}}}}},\"xml\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"}}}}}}}}}}}",
+                    "fe_metadata": "{\"openapi\":\"3.0.3\",\"info\":{\"title\":\"Swagger Customer Backend- OpenAPI 3.0\",\"description\":\"This is a Customer API based on the OpenAPI 3.0 specification.  \",\"license\":{\"name\":\"Apache 2.0\",\"url\":\"http://www.apache.org/licenses/LICENSE-2.0.html\"},\"version\":\"1.0.0\"},\"externalDocs\":{\"description\":\"Find out more about Swagger\",\"url\":\"http://swagger.io\"},\"servers\":[{\"url\":\"https://flogo.dp1.atsfr-emea.azure.dataplanes.pro/tibco/apps/customer-backend\"}],\"tags\":[{\"name\":\"customer\",\"description\":\"Operations about customer\"}],\"paths\":{\"/customer-backend/{customerId}\":{\"get\":{\"tags\":[\"customer\"],\"summary\":\"Find customer by ID\",\"description\":\"Returns a single customer\",\"operationId\":\"getCustomerById\",\"parameters\":[{\"name\":\"customerId\",\"in\":\"path\",\"description\":\"ID of customer to return\",\"required\":true,\"schema\":{\"type\":\"integer\",\"format\":\"int64\"}}],\"responses\":{\"200\":{\"description\":\"successful operation\",\"content\":{\"application/json\":{\"schema\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"format\":\"int64\",\"example\":100000},\"name\":{\"type\":\"string\",\"example\":\"fehguy\"},\"email\":{\"type\":\"string\",\"example\":\"fehguy@mail.com\"},\"age\":{\"type\":\"integer\",\"format\":\"int64\",\"example\":32},\"city\":{\"type\":\"string\",\"example\":\"Paris\"}},\"xml\":{\"name\":\"customer\"}}},\"application/xml\":{\"schema\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"format\":\"int64\",\"example\":100000},\"name\":{\"type\":\"string\",\"example\":\"fehguy\"},\"email\":{\"type\":\"string\",\"example\":\"fehguy@mail.com\"},\"age\":{\"type\":\"integer\",\"format\":\"int64\",\"example\":32},\"city\":{\"type\":\"string\",\"example\":\"Paris\"}},\"xml\":{\"name\":\"customer\"}}}}},\"400\":{\"description\":\"Invalid ID supplied\"},\"404\":{\"description\":\"Customer not found\"}}}}},\"components\":{\"schemas\":{\"customer-backend\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"format\":\"int64\",\"example\":100000},\"name\":{\"type\":\"string\",\"example\":\"fehguy\"},\"email\":{\"type\":\"string\",\"example\":\"fehguy@mail.com\"},\"age\":{\"type\":\"integer\",\"format\":\"int64\",\"example\":32},\"city\":{\"type\":\"string\",\"example\":\"Paris\"}},\"xml\":{\"name\":\"customer\"}}}}}"
+                  },
+                  "pathParams": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"customerId\":{\"type\":\"number\"}},\"required\":[\"customerId\"]}",
+                    "fe_metadata": "[{\"parameterName\":\"customerId\",\"type\":\"number\",\"required\":true}]"
+                  },
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                },
+                "output": {
+                  "responseCodes": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"200\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"format\":\"int64\",\"example\":100000},\"name\":{\"type\":\"string\",\"example\":\"fehguy\"},\"email\":{\"type\":\"string\",\"example\":\"fehguy@mail.com\"},\"age\":{\"type\":\"integer\",\"format\":\"int64\",\"example\":32},\"city\":{\"type\":\"string\",\"example\":\"Paris\"}},\"xml\":{\"name\":\"customer\"}},\"400\":{\"type\":\"string\"},\"404\":{\"type\":\"string\"}}}",
+                    "fe_metadata": "{\"type\":\"object\",\"properties\":{\"200\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"format\":\"int64\",\"example\":100000},\"name\":{\"type\":\"string\",\"example\":\"fehguy\"},\"email\":{\"type\":\"string\",\"example\":\"fehguy@mail.com\"},\"age\":{\"type\":\"integer\",\"format\":\"int64\",\"example\":32},\"city\":{\"type\":\"string\",\"example\":\"Paris\"}},\"xml\":{\"name\":\"customer\"}},\"400\":{\"type\":\"string\"},\"404\":{\"type\":\"string\"}}}"
+                  },
+                  "responseCodesSchema": {
+                    "type": "json",
+                    "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"code\":{\"type\":\"number\"},\"responseType\":{\"type\":\"string\"},\"responseSchema\":{\"type\":\"string\"}},\"required\":[\"code\",\"responseType\"]}}",
+                    "fe_metadata": "[{\"code\":200,\"responseType\":\"object\",\"responseSchema\":\"{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"id\\\":{\\\"type\\\":\\\"integer\\\",\\\"format\\\":\\\"int64\\\",\\\"example\\\":100000},\\\"name\\\":{\\\"type\\\":\\\"string\\\",\\\"example\\\":\\\"fehguy\\\"},\\\"email\\\":{\\\"type\\\":\\\"string\\\",\\\"example\\\":\\\"fehguy@mail.com\\\"},\\\"age\\\":{\\\"type\\\":\\\"integer\\\",\\\"format\\\":\\\"int64\\\",\\\"example\\\":32},\\\"city\\\":{\\\"type\\\":\\\"string\\\",\\\"example\\\":\\\"Paris\\\"}},\\\"xml\\\":{\\\"name\\\":\\\"customer\\\"}}\"},{\"code\":400,\"responseType\":\"string\"},{\"code\":404,\"responseType\":\"string\"}]"
+                  },
+                  "headers": {
+                    "type": "json",
+                    "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false},\"Set-Cookie\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                    "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Set-Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "MapperCustomer",
+            "name": "MapperCustomer",
+            "description": "Mapper Activity",
+            "activity": {
+              "ref": "#mapper",
+              "input": {
+                "input": {
+                  "mapping": {
+                    "id": "=$activity[CallBackendService].responseCodes[\"200\"].id",
+                    "name": "=$activity[CallBackendService].responseCodes[\"200\"].name",
+                    "email": "=$activity[CallBackendService].responseCodes[\"200\"].email",
+                    "age": "=$activity[CallBackendService].responseCodes[\"200\"].age",
+                    "city": "=$activity[CallBackendService].responseCodes[\"200\"].city"
+                  }
+                }
+              },
+              "schemas": {
+                "input": {
+                  "input": "schema://customerSchema"
+                },
+                "output": {
+                  "output": {
+                    "type": "json",
+                    "value": "{\n  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"number\"\n    },\n    \"name\": {\n      \"type\": \"string\"\n    },\n    \"email\": {\n      \"type\": \"string\"\n    },\n    \"age\": {\n      \"type\": \"number\"\n    },\n    \"city\": {\n      \"type\": \"string\"\n    }\n  }\n}",
+                    "fe_metadata": "{\n  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"number\"\n    },\n    \"name\": {\n      \"type\": \"string\"\n    },\n    \"email\": {\n      \"type\": \"string\"\n    },\n    \"age\": {\n      \"type\": \"number\"\n    },\n    \"city\": {\n      \"type\": \"string\"\n    }\n  }\n}"
+                  }
+                }
+              },
+              "feSchemaMap": {}
+            }
+          },
+          {
+            "id": "Return",
+            "name": "Return",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "responseBody": {
+                    "mapping": {
+                      "body": "=$activity[MapperCustomer].output"
+                    }
+                  },
+                  "code": 200
+                }
+              }
+            }
+          },
+          {
+            "id": "Return400",
+            "name": "Return400",
+            "description": "Simple Return Activity",
+            "activity": {
+              "ref": "#actreturn",
+              "settings": {
+                "mappings": {
+                  "code": 400,
+                  "responseBody": {
+                    "mapping": {
+                      "body": "No customer found"
+                    }
+                  }
+                }
+              }
+            }
           }
         ],
-        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEyLCJ5IjoxMDF9fQ==",
+        "fe_metadata": "eyJTdGFydEFjdGl2aXR5Ijp7IngiOjEyLCJ5IjoxMDF9LCJMb2dNZXNzYWdlIjp7IngiOjEzNiwieSI6OTV9LCJDYWxsQmFja2VuZFNlcnZpY2UiOnsieCI6Mzg5LCJ5Ijo5NH0sIk1hcHBlckN1c3RvbWVyIjp7IngiOjczOCwieSI6OTN9LCJSZXR1cm4iOnsieCI6OTUzLCJ5Ijo4N30sIlJldHVybjQwMCI6eyJ4Ijo3NTYsInkiOjI3OX19",
         "metadata": {
           "input": [
             {
@@ -62,10 +346,11 @@
             }
           ],
           "fe_metadata": {
-            "input": "{\"type\":\"object\",\"title\":\"CustomerAPI\",\"properties\":{\"pathParams\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"number\"}},\"required\":[\"id\"]},\"requestURI\":{\"type\":\"string\",\"required\":false},\"method\":{\"type\":\"string\",\"required\":false}}}",
+            "input": "{\"type\":\"object\",\"title\":\"ReceiveHTTPMessage\",\"properties\":{\"pathParams\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"number\"}},\"required\":[\"id\"]},\"requestURI\":{\"type\":\"string\",\"required\":false},\"method\":{\"type\":\"string\",\"required\":false}}}",
             "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"code\":{\"type\":\"integer\",\"required\":false},\"responseBody\":{\"type\":\"object\",\"properties\":{\"body\":{\"type\":\"any\"},\"headers\":{\"type\":\"object\"}}}},\"required\":[]}"
           }
-        }
+        },
+        "explicitReply": true
       }
     }
   ],
@@ -77,10 +362,113 @@
       "fe_metadata": "{\n    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n    \"type\": \"object\",\n    \"properties\": {\n        \"id\": {\n            \"type\": \"number\"\n        },\n        \"name\": {\n            \"type\": \"string\"\n        },\n        \"email\": {\n            \"type\": \"string\"\n        },\n        \"age\": {\n            \"type\": \"number\"\n        },\n        \"city\": {\n            \"type\": \"string\"\n        }\n    }\n}"
     }
   },
+  "specs": {
+    "d1177d5c": {
+      "id": "d1177d5c",
+      "name": "customer",
+      "type": "OpenAPI",
+      "content": "ewogICJvcGVuYXBpIjogIjMuMC4wIiwKICAiaW5mbyI6IHsKICAgICJ0aXRsZSI6ICJDdXN0b21lciBBUEkgLSBPcGVuQVBJIDMuMCIsCiAgICAiZGVzY3JpcHRpb24iOiAiQ3VzdG9tZXIgQVBJIiwKICAgICJjb250YWN0IjogewogICAgICAiZW1haWwiOiAibWFyay5tdXNzZXR0QGNsb3VkLmNvbSIKICAgIH0sCiAgICAibGljZW5zZSI6IHsKICAgICAgIm5hbWUiOiAiQXBhY2hlIDIuMCIsCiAgICAgICJ1cmwiOiAiaHR0cDovL3d3dy5hcGFjaGUub3JnL2xpY2Vuc2VzL0xJQ0VOU0UtMi4wLmh0bWwiCiAgICB9LAogICAgInZlcnNpb24iOiAiMS4wLjAiCiAgfSwKICAiZXh0ZXJuYWxEb2NzIjogewogICAgImRlc2NyaXB0aW9uIjogIkZpbmQgb3V0IG1vcmUgYWJvdXQgQ3VzdG9tZXIgQVBJIiwKICAgICJ1cmwiOiAiaHR0cHM6Ly93d3cudGliY28uY29tIgogIH0sCiAgInRhZ3MiOiBbCiAgICB7CiAgICAgICJuYW1lIjogImN1c3RvbWVyIiwKICAgICAgImRlc2NyaXB0aW9uIjogIkN1c3RvbWVyIEFQSSIsCiAgICAgICJleHRlcm5hbERvY3MiOiB7CiAgICAgICAgImRlc2NyaXB0aW9uIjogIkZpbmQgb3V0IG1vcmUiLAogICAgICAgICJ1cmwiOiAiaHR0cHM6Ly93d3cudGliY28uY29tIgogICAgICB9CiAgICB9CiAgXSwKICAicGF0aHMiOiB7CiAgICAiL2N1c3RvbWVyL3tpZH0iOiB7CiAgICAgICJnZXQiOiB7CiAgICAgICAgInRhZ3MiOiBbCiAgICAgICAgICAiY3VzdG9tZXIiCiAgICAgICAgXSwKICAgICAgICAic3VtbWFyeSI6ICJSZXRyaWV2ZSBhIGN1c3RvbWVyIG9iamVjdCIsCiAgICAgICAgImRlc2NyaXB0aW9uIjogIlJldHVybnMgYSBjdXN0b21lciBvYmplY3QiLAogICAgICAgICJvcGVyYXRpb25JZCI6ICJnZXRDdXN0b21lckJ5SWQiLAogICAgICAgICJwYXJhbWV0ZXJzIjogWwogICAgICAgICAgewogICAgICAgICAgICAibmFtZSI6ICJpZCIsCiAgICAgICAgICAgICJpbiI6ICJwYXRoIiwKICAgICAgICAgICAgImRlc2NyaXB0aW9uIjogImlkIiwKICAgICAgICAgICAgInJlcXVpcmVkIjogdHJ1ZSwKICAgICAgICAgICAgInNjaGVtYSI6IHsKICAgICAgICAgICAgICAidHlwZSI6ICJpbnRlZ2VyIgogICAgICAgICAgICB9LAogICAgICAgICAgICAiZXhhbXBsZSI6IDEKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJyZXNwb25zZXMiOiB7CiAgICAgICAgICAiMjAwIjogewogICAgICAgICAgICAiZGVzY3JpcHRpb24iOiAic3VjY2Vzc2Z1bCBvcGVyYXRpb24iLAogICAgICAgICAgICAiY29udGVudCI6IHsKICAgICAgICAgICAgICAiYXBwbGljYXRpb24vanNvbiI6IHsKICAgICAgICAgICAgICAgICJzY2hlbWEiOiB7CiAgICAgICAgICAgICAgICAgICIkcmVmIjogIiMvY29tcG9uZW50cy9zY2hlbWFzL2N1c3RvbWVyIgogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQogICAgICAgICAgfSwKICAgICAgICAgICI0MDAiOiB7CiAgICAgICAgICAgICJkZXNjcmlwdGlvbiI6ICJjdXN0b21lciBub3QgZm91bmQiCiAgICAgICAgICB9CiAgICAgICAgfQogICAgICB9CiAgICB9CiAgfSwKICAiY29tcG9uZW50cyI6IHsKICAgICJzY2hlbWFzIjogewogICAgICAiZXJyb3IiOiB7CiAgICAgICAgInR5cGUiOiAib2JqZWN0IiwKICAgICAgICAicHJvcGVydGllcyI6IHsKICAgICAgICAgICJ0eXBlIjogewogICAgICAgICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAgICAgICAiZXhhbXBsZSI6ICJyZXN0IgogICAgICAgICAgfSwKICAgICAgICAgICJtZXNzYWdlSWQiOiB7CiAgICAgICAgICAgICJ0eXBlIjogInN0cmluZyIsCiAgICAgICAgICAgICJleGFtcGxlIjogIjEyMzU2LTEyMzUtMjMxMjMiCiAgICAgICAgICB9LAogICAgICAgICAgImV4cGxhbmF0aW9uIjogewogICAgICAgICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAgICAgICAiZXhhbXBsZSI6ICJDdXN0b21lciBub3QgZm91bmQiCiAgICAgICAgICB9LAogICAgICAgICAgImFjdGlvbiI6IHsKICAgICAgICAgICAgInR5cGUiOiAic3RyaW5nIiwKICAgICAgICAgICAgImV4YW1wbGUiOiAiUmVzdWJtaXQgdGhlIHJlcXVlc3Qgd2l0aCB0aGUgY29ycmVjdCBjdXN0b21lciBpZGVudGlmaWVyIgogICAgICAgICAgfQogICAgICAgIH0KICAgICAgfSwKICAgICAgImN1c3RvbWVyIjogewogICAgICAgICJ0eXBlIjogIm9iamVjdCIsCiAgICAgICAgInByb3BlcnRpZXMiOiB7CiAgICAgICAgICAiaWQiOiB7CiAgICAgICAgICAgICJ0eXBlIjogImludGVnZXIiLAogICAgICAgICAgICAiZGVzY3JpcHRpb24iOiAiaWRlbnRpZmllciIsCiAgICAgICAgICAgICJleGFtcGxlIjogMQogICAgICAgICAgfSwKICAgICAgICAgICJuYW1lIjogewogICAgICAgICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAgICAgICAiZGVzY3JpcHRpb24iOiAibmFtZSIsCiAgICAgICAgICAgICJleGFtcGxlIjogIkpvaG4gRG9lIgogICAgICAgICAgfSwKICAgICAgICAgICJlbWFpbCI6IHsKICAgICAgICAgICAgInR5cGUiOiAic3RyaW5nIiwKICAgICAgICAgICAgImRlc2NyaXB0aW9uIjogImVtYWlsIiwKICAgICAgICAgICAgImV4YW1wbGUiOiAiam9obi5kb2VAZXhhbXBsZS5jb20iCiAgICAgICAgICB9LAogICAgICAgICAgImFnZSI6IHsKICAgICAgICAgICAgInR5cGUiOiAiaW50ZWdlciIsCiAgICAgICAgICAgICJkZXNjcmlwdGlvbiI6ICJhZ2UiLAogICAgICAgICAgICAiZXhhbXBsZSI6IDMwCiAgICAgICAgICB9LAogICAgICAgICAgImNpdHkiOiB7CiAgICAgICAgICAgICJ0eXBlIjogInN0cmluZyIsCiAgICAgICAgICAgICJkZXNjcmlwdGlvbiI6ICJjaXR5IiwKICAgICAgICAgICAgImV4YW1wbGUiOiAiTmV3IFlvcmsiCiAgICAgICAgICB9CiAgICAgICAgfQogICAgICB9CiAgICB9CiAgfQp9",
+      "version": "1.0.0"
+    }
+  },
   "connections": {},
-  "contrib": "W10=",
+  "contrib": "W3sicmVmIjoiZ2l0aHViLmNvbS90aWJjby9mbG9nby1nZW5lcmFsL3NyYy9hcHAvR2VuZXJhbCIsImlkIjoiR2VuZXJhbCIsInZlcnNpb24iOiIxLjYuNCIsInRhZyI6IjEuNi40LWIwMiIsIm5hbWUiOiJHZW5lcmFsIiwiczNsb2NhdGlvbiI6IlRpYmNvL0dlbmVyYWwiLCJpc1VzZXJFeHRlbnNpb24iOmZhbHNlfV0=",
   "metadata": {
-    "endpoints": [],
+    "endpoints": [
+      {
+        "protocol": "http",
+        "port": "10000",
+        "spec": {
+          "name": "customer-api-elghazali",
+          "version": "1.0.0"
+        },
+        "title": "ReceiveHTTPMessage",
+        "swagger": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "customer-api-elghazali",
+            "version": "1.0.0",
+            "description": "Simple REST Trigger"
+          },
+          "paths": {
+            "/customer/{id}": {
+              "get": {
+                "summary": "getCustomerById",
+                "operationId": "get_customer_id",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "description": "Request parameter",
+                    "required": true,
+                    "schema": {
+                      "type": "number"
+                    }
+                  }
+                ],
+                "responses": {
+                  "200": {
+                    "description": "",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/schema1"
+                        }
+                      }
+                    }
+                  },
+                  "400": {
+                    "description": "",
+                    "content": {
+                      "text/plain": {
+                        "schema": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "Returns a customer object by Id"
+              }
+            }
+          },
+          "components": {
+            "schemas": {
+              "schema1": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "identifier",
+                    "example": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "name",
+                    "example": "John Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "email",
+                    "example": "john.doe@example.com"
+                  },
+                  "age": {
+                    "type": "integer",
+                    "description": "age",
+                    "example": 30
+                  },
+                  "city": {
+                    "type": "string",
+                    "description": "city",
+                    "example": "New York"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ],
     "flogoVersion": "2.25.3"
   }
 }

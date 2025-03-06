@@ -1,0 +1,124 @@
+{
+    "report": {
+        "suites": [
+            {
+                "suiteName": "Selected Test Cases",
+                "testCases": [
+                    {
+                        "testName": "test5",
+                        "flowName": "getCustomerById",
+                        "activities": [
+                            {
+                                "name": "StartActivity"
+                            },
+                            {
+                                "name": "LogMessage",
+                                "input": {
+                                    "Log Level": "INFO",
+                                    "flowInfo": false,
+                                    "logLevel": "",
+                                    "message": "Retrieving customer object for id: 5"
+                                }
+                            },
+                            {
+                                "name": "CallBackendService",
+                                "input": {
+                                    "Client Certificate": "",
+                                    "Client Key": "",
+                                    "Method": "GET",
+                                    "Server Certificate": "",
+                                    "Timeout": 0,
+                                    "Uri": "https://flogo.dp1.atsfr-emea.azure.dataplanes.pro/tibco/apps/customer-backend",
+                                    "Use certificate for verification": false,
+                                    "authorization": false,
+                                    "disableKeepAlives": false,
+                                    "enableASR": false,
+                                    "host": "",
+                                    "mutualAuth": false,
+                                    "pathParams": {
+                                        "customerId": 5
+                                    },
+                                    "proxy": "",
+                                    "requestType": "application/json",
+                                    "resourcePath": "/customer-backend/{customerId}",
+                                    "serviceName": "",
+                                    "swagger": {
+                                        "content": "data:application/json;base64,ewogICJvcGVuYXBpIjogIjMuMC4zIiwKICAiaW5mbyI6IHsKICAgICJ0aXRsZSI6ICJTd2FnZ2VyIEN1c3RvbWVyIEJhY2tlbmQtIE9wZW5BUEkgMy4wIiwKICAgICJkZXNjcmlwdGlvbiI6ICJUaGlzIGlzIGEgQ3VzdG9tZXIgQVBJIGJhc2VkIG9uIHRoZSBPcGVuQVBJIDMuMCBzcGVjaWZpY2F0aW9uLiAgIiwKICAgICJsaWNlbnNlIjogewogICAgICAibmFtZSI6ICJBcGFjaGUgMi4wIiwKICAgICAgInVybCI6ICJodHRwOi8vd3d3LmFwYWNoZS5vcmcvbGljZW5zZXMvTElDRU5TRS0yLjAuaHRtbCIKICAgIH0sCiAgICAidmVyc2lvbiI6ICIxLjAuMCIKICB9LAogICJleHRlcm5hbERvY3MiOiB7CiAgICAiZGVzY3JpcHRpb24iOiAiRmluZCBvdXQgbW9yZSBhYm91dCBTd2FnZ2VyIiwKICAgICJ1cmwiOiAiaHR0cDovL3N3YWdnZXIuaW8iCiAgfSwKICAic2VydmVycyI6IFsKICAgIHsKICAgICAgInVybCI6ICJodHRwczovL2Zsb2dvLmRwMS5hdHNmci1lbWVhLmF6dXJlLmRhdGFwbGFuZXMucHJvL3RpYmNvL2FwcHMvY3VzdG9tZXItYmFja2VuZCIKICAgIH0KICBdLAogICJ0YWdzIjogWwogICAgewogICAgICAibmFtZSI6ICJjdXN0b21lciIsCiAgICAgICJkZXNjcmlwdGlvbiI6ICJPcGVyYXRpb25zIGFib3V0IGN1c3RvbWVyIgogICAgfQogIF0sCiAgInBhdGhzIjogewogICAgIi9jdXN0b21lci1iYWNrZW5kL3tjdXN0b21lcklkfSI6IHsKICAgICAgImdldCI6IHsKICAgICAgICAidGFncyI6IFsKICAgICAgICAgICJjdXN0b21lciIKICAgICAgICBdLAogICAgICAgICJzdW1tYXJ5IjogIkZpbmQgY3VzdG9tZXIgYnkgSUQiLAogICAgICAgICJkZXNjcmlwdGlvbiI6ICJSZXR1cm5zIGEgc2luZ2xlIGN1c3RvbWVyIiwKICAgICAgICAib3BlcmF0aW9uSWQiOiAiZ2V0Q3VzdG9tZXJCeUlkIiwKICAgICAgICAicGFyYW1ldGVycyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgIm5hbWUiOiAiY3VzdG9tZXJJZCIsCiAgICAgICAgICAgICJpbiI6ICJwYXRoIiwKICAgICAgICAgICAgImRlc2NyaXB0aW9uIjogIklEIG9mIGN1c3RvbWVyIHRvIHJldHVybiIsCiAgICAgICAgICAgICJyZXF1aXJlZCI6IHRydWUsCiAgICAgICAgICAgICJzY2hlbWEiOiB7CiAgICAgICAgICAgICAgInR5cGUiOiAiaW50ZWdlciIsCiAgICAgICAgICAgICAgImZvcm1hdCI6ICJpbnQ2NCIKICAgICAgICAgICAgfQogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgInJlc3BvbnNlcyI6IHsKICAgICAgICAgICIyMDAiOiB7CiAgICAgICAgICAgICJkZXNjcmlwdGlvbiI6ICJzdWNjZXNzZnVsIG9wZXJhdGlvbiIsCiAgICAgICAgICAgICJjb250ZW50IjogewogICAgICAgICAgICAgICJhcHBsaWNhdGlvbi9qc29uIjogewogICAgICAgICAgICAgICAgInNjaGVtYSI6IHsKICAgICAgICAgICAgICAgICAgIiRyZWYiOiAiIy9jb21wb25lbnRzL3NjaGVtYXMvY3VzdG9tZXItYmFja2VuZCIKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICB9LAogICAgICAgICAgICAgICJhcHBsaWNhdGlvbi94bWwiOiB7CiAgICAgICAgICAgICAgICAic2NoZW1hIjogewogICAgICAgICAgICAgICAgICAiJHJlZiI6ICIjL2NvbXBvbmVudHMvc2NoZW1hcy9jdXN0b21lci1iYWNrZW5kIgogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQogICAgICAgICAgfSwKICAgICAgICAgICI0MDAiOiB7CiAgICAgICAgICAgICJkZXNjcmlwdGlvbiI6ICJJbnZhbGlkIElEIHN1cHBsaWVkIgogICAgICAgICAgfSwKICAgICAgICAgICI0MDQiOiB7CiAgICAgICAgICAgICJkZXNjcmlwdGlvbiI6ICJDdXN0b21lciBub3QgZm91bmQiCiAgICAgICAgICB9CiAgICAgICAgfQogICAgICB9CiAgICB9CiAgfSwKICAiY29tcG9uZW50cyI6IHsKICAgICJzY2hlbWFzIjogewogICAgICAKICAgICAgImN1c3RvbWVyLWJhY2tlbmQiOiB7CiAgICAgICAgInR5cGUiOiAib2JqZWN0IiwKICAgICAgICAicHJvcGVydGllcyI6IHsKICAgICAgICAgICJpZCI6IHsKICAgICAgICAgICAgInR5cGUiOiAiaW50ZWdlciIsCiAgICAgICAgICAgICJmb3JtYXQiOiAiaW50NjQiLAogICAgICAgICAgICAiZXhhbXBsZSI6IDEwMDAwMAogICAgICAgICAgfSwKICAgICAgICAgICJuYW1lIjogewogICAgICAgICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAgICAgICAiZXhhbXBsZSI6ICJmZWhndXkiCiAgICAgICAgICB9LAogICAgICAgICAgImVtYWlsIjogewogICAgICAgICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAgICAgICAiZXhhbXBsZSI6ICJmZWhndXlAbWFpbC5jb20iCiAgICAgICAgICB9LAogICAgICAgICAgImFnZSI6IHsKICAgICAgICAgICAgInR5cGUiOiAiaW50ZWdlciIsCiAgICAgICAgICAgICJmb3JtYXQiOiAiaW50NjQiLAogICAgICAgICAgICAiZXhhbXBsZSI6IDMyCiAgICAgICAgICB9LAogICAgICAgICAgImNpdHkiOiB7CiAgICAgICAgICAgICJ0eXBlIjogInN0cmluZyIsCiAgICAgICAgICAgICJleGFtcGxlIjogIlBhcmlzIgogICAgICAgICAgfQogICAgICAgIH0sCiAgICAgICAgInhtbCI6IHsKICAgICAgICAgICJuYW1lIjogImN1c3RvbWVyIgogICAgICAgIH0KICAgICAgfQogICAgfQogIH0KfQ==",
+                                        "filename": "customer-backend.json"
+                                    }
+                                },
+                                "output": {
+                                    "configureResponseCodes": false,
+                                    "headers": {
+                                        "Connection": "keep-alive",
+                                        "Content-Length": "32",
+                                        "Content-Type": "application/json; charset=UTF-8"
+                                    },
+                                    "responseBody": null,
+                                    "responseCodes": {
+                                        "200": "",
+                                        "400": {
+                                            "message": "Customer Not found"
+                                        },
+                                        "404": ""
+                                    },
+                                    "responseCodesSchema": null,
+                                    "responseTimeInMilliSec": 98,
+                                    "responseType": "",
+                                    "statusCode": 400
+                                }
+                            },
+                            {
+                                "name": "Return400",
+                                "output": {
+                                    "code": 400,
+                                    "responseBody": {
+                                        "body": "No customer found"
+                                    }
+                                }
+                            }
+                        ],
+                        "links": [
+                            {
+                                "linkName": "StartActivity to LogMessage",
+                                "from": "StartActivity",
+                                "to": "LogMessage"
+                            },
+                            {
+                                "linkName": "LogMessage to InvokeRESTService",
+                                "from": "LogMessage",
+                                "to": "CallBackendService"
+                            },
+                            {
+                                "linkName": "CallBackendService to Return1",
+                                "from": "CallBackendService",
+                                "to": "Return400"
+                            }
+                        ],
+                        "errorHandler": {
+                            "activities": []
+                        },
+                        "testResult": {
+                            "totalAssertions": 0,
+                            "executedAssertions": 0,
+                            "failedAssertions": 0,
+                            "skippedAssertions": 0,
+                            "successAssertions": 0,
+                            "flowExecuted": true
+                        }
+                    }
+                ],
+                "suiteResult": {
+                    "totalTests": 1,
+                    "failedTests": 0,
+                    "errorFailed": 0,
+                    "assertionFailed": 0
+                }
+            }
+        ]
+    },
+    "result": {
+        "totalSuites": 1,
+        "failedSuites": 0
+    }
+}
