@@ -51,6 +51,8 @@ metadata:
       url: vscode://file//Users/dev/git/customer-api-elghazali/src/customer-api.flogo
     - title: VSCode Editor (Folder)
       url: vscode://file//Users/dev/git/customer-api-elghazali
+    - title: VSCode Editor (Online)
+      url: https://code-server.dp1.atsfr-emea.azure.dataplanes.pro/?folder=/home/coder/git/customer-api-elghazali
   tibcoPlatformApps:
     - appType: Flogo
       appName: customer-api-elghazali
